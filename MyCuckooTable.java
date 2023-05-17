@@ -16,7 +16,7 @@ public class MyCuckooTable<K, V> {
         return myTable.size();
     }
     public void reset() {
-        new MyCuckooTable<K,V>();
+
     }
     public boolean put(K searchKey, V newValue) {
 //        myTable.put(searchKey, newValue);
@@ -25,15 +25,10 @@ public class MyCuckooTable<K, V> {
         // code length set to 9 bits
         return false;
     }
-    public V get() {
-        return null;
+    public V get(K searchKey) {
+        return myTable.getOrDefault(searchKey, null);
     }
     private int hash(K key, int fno) {
-        // use this instead of hashCode() method
-        // take key
-        // if (fno = 1) return h1(K)
-        // else if (fno = 2) return h2(K)
-        // return int [0 - (cap-1)]
-        return 0;
+        return (int) (sh.hash(fno + "" + key) & (TAB_SIZE - 1));
     }
 }
