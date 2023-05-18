@@ -1,7 +1,10 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -12,7 +15,9 @@ public class Main {
 
         if (args[0].equals("c")) {
 
-            lzw.compress(args[1]);
+            Path path = Paths.get(args[1]);
+            Stream<String> stringStream = Files.lines(path);
+            lzw.compress(stringStream.toString());
             final long endTime = System.currentTimeMillis();
             System.out.println("Compression runtime: " + (endTime - startTime));
 
