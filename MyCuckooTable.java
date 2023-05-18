@@ -10,20 +10,16 @@ public class MyCuckooTable<K, V> {
     private final SipHash sh = new SipHash();
     public MyCuckooTable() {
         myTable = new Hashtable<K, V>(TAB_SIZE);
-        // control code
     }
     public int size() {
         return myTable.size();
     }
     public void reset() {
-
+        myTable.clear();
     }
     public boolean put(K searchKey, V newValue) {
-//        myTable.put(searchKey, newValue);
-        // all 0-255 one char strings
-        // control code at 256 empty string
-        // code length set to 9 bits
-        return false;
+        myTable.put(searchKey, newValue);
+        return myTable.contains(newValue);
     }
     public V get(K searchKey) {
         return myTable.getOrDefault(searchKey, null);
