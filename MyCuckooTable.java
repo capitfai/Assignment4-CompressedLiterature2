@@ -42,8 +42,8 @@ public class MyCuckooTable<K, V> {
 
     /**
      * Adds a new entry to the table, returns true if successful, false if not.
-     * @param searchKey
-     * @param newValue
+     * @param searchKey search key
+     * @param newValue new value
      * @return boolean
      */
     public boolean put(K searchKey, V newValue) {
@@ -53,7 +53,7 @@ public class MyCuckooTable<K, V> {
 
     /**
      * Returns the value for a given key, or null.
-     * @param searchKey
+     * @param searchKey search key
      * @return V
      */
     public V get(K searchKey) {
@@ -62,8 +62,8 @@ public class MyCuckooTable<K, V> {
 
     /**
      * Hashes a key by the function defined by fno.
-     * @param key
-     * @param fno
+     * @param key key
+     * @param fno fno
      * @return int
      */
     private int hash(K key, int fno) {
