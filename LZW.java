@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class LZW {
 
     // fields
@@ -7,7 +10,7 @@ public class LZW {
      */
     static final int RESTART = 256;
 
-    MyCuckooTable<String, Integer> myTable;
+    MyCuckooTable<Integer, String> myTable;
 
     // constructors
 
@@ -25,28 +28,32 @@ public class LZW {
      * @return list of encoded bytes.
      */
     byte[] compress(String fullText) {
-        // initialize/reset MyCuckooTable
-        myTable = new MyCuckooTable<>();
-        for(int i = 0; i < RESTART; i++) {
-            myTable.put(String.valueOf((char) i), i);
-        }
-
-        StringBuilder current = new StringBuilder();
-        String currentString;
-        char byteIn;
-
-        while (fullText.length() > 0) {
-            // initialize first input character
-            current.append(fullText);
-            currentString = current.toString();
-            // if (!myTable.)
-        }
-
         return null;
     }
 
     String decompress(byte[] compressed) {
-        return "";
+        myTable = new MyCuckooTable<>();
+        List<String> out = new ArrayList<>();
+        int curr = compressed[0];
+        String seq;
+        out.add(Character.toString((char) curr));
+        for (int i = 1; i < compressed.length; i++) {
+            int code = compressed[i];
+            if (myTable.get(code) != null) {
+                seq = myTable.get(code);
+                out.add(seq);
+                String next = seq + seq.charAt(0);
+                myTable.put(myTable.size(), next);
+            } else {
+                seq = myTable.get(curr);
+                seq += seq.charAt(0);
+                out.add(seq);
+                myTable.put(myTable.size(), seq);
+            }
+            curr = code;
+        }
+        return String.join("", out);
+
     }
 
 }
