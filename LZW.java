@@ -22,12 +22,34 @@ public class LZW {
     // methods
 
     /**
-     * Compresses String text to list of encoded bytes and initializes dictionary.
+     * Compresses String text to list of encoded bytes and initializes table.
      *
      * @param fullText String text to be encoded.
      * @return list of encoded bytes.
      */
     byte[] compress(String fullText) {
+        // initialize/reset MyCuckooTable
+        myTable = new MyCuckooTable<>();
+        for(int i = 0; i < RESTART; i++) {
+            myTable.put(i, "" + (char) i);
+        }
+
+        byte[] data = new byte[fullText.length()];
+        String currentPrefix = String.valueOf(data[0]);
+        String currentChar;
+        int code = RESTART;
+
+        for(int i = 1; i < data.length; i++) {
+            currentChar = String.valueOf(data[i]);
+            if (myTable.get(currentPrefix + currentChar) != null) {
+                currentPrefix += currentChar;
+            } else {
+                myTable.put(code, currentPrefix + currentChar);
+                code++;
+                currentPrefix = currentChar;
+            }
+        }
+
         return null;
     }
 
