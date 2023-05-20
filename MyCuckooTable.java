@@ -1,10 +1,12 @@
+import java.util.HashMap;
 import java.util.Hashtable;
 
 public class MyCuckooTable<K, V> {
     /**
      * Hashtable containing keys (type K) and values (type V).
      */
-    Hashtable<K,V> myTable;
+    HashMap<K,V> table1;
+    HashMap<K, V> table2;
     /**
      * Table size, 1 left shifted 16 times.
      */
@@ -17,12 +19,15 @@ public class MyCuckooTable<K, V> {
      * SipHash object.
      */
     private final SipHash sh = new SipHash();
+    private int evictions;
 
     /**
      * Cuckoo Table constructor.
      */
     public MyCuckooTable() {
-        myTable = new Hashtable<K, V>(TAB_SIZE);
+        table1 = new HashMap<K, V>(TAB_SIZE);
+        table2 = new HashMap<K, V>(TAB_SIZE);
+        evictions = 0;
     }
 
     /**
@@ -30,14 +35,15 @@ public class MyCuckooTable<K, V> {
      * @return int
      */
     public int size() {
-        return myTable.size();
+        return table1.size() + table2.size();
     }
 
     /**
      * Clears the table.
      */
     public void reset() {
-        myTable.clear();
+        table1.clear();
+        table2.clear();
     }
 
     /**
@@ -47,8 +53,44 @@ public class MyCuckooTable<K, V> {
      * @return boolean
      */
     public boolean put(K searchKey, V newValue) {
-        myTable.put(searchKey, newValue);
-        return myTable.contains(newValue);
+//        int hash1 = hash(searchKey, 1);
+//        int hash2 = hash(searchKey, 2);
+//        V evictedValue;
+//        for (int i = 0; i < MaxLoop; i++) {
+//            if (!table1.containsKey(hash1)) {
+//                table1.put(searchKey, newValue);
+//                return true;
+//            } else {
+//                evictedValue = table1.get(hash1);
+////                table2.put(hash(table1.replace(hash1, newValue), 2);
+//                table1.put()
+//                evictions++;
+//            }
+//            table2.put(searchKey, newValue);
+//            newValue = evictedValue;
+//            if (evictedValue.equals(newValue)) {
+//                return true; // Key already exists, update the value
+//            }
+//            hash1 = hash(searchKey, 1);
+//            hash2 = hash(searchKey, 2);
+//        }
+//        return false;
+
+        // start
+        int hash1 = hash(searchKey, 1);
+        int hash2 = hash(searchKey, 2);
+        V evictedValue;
+        for (int i =0; i < MaxLoop; i++) { // loop up to maxloop times
+            if (table1.get(hash1) == null) { // if the spot in table1 is filled
+                evictedValue = table1.get(hash(searchKey, 1)); // evict old value
+                table1.put(searchKey, newValue); // put in new value
+                evictions++; // add to evictions
+            }
+            // if the spot in table 2 is filled
+            // do the same thing and bounce back to table1
+        }
+        // if exceeds maxloop, return false cause it failed (maybe rehash both tables entirely?)
+        return false;
     }
 
     /**
@@ -57,7 +99,14 @@ public class MyCuckooTable<K, V> {
      * @return V
      */
     public V get(K searchKey) {
-        return myTable.getOrDefault(searchKey, null);
+        int hash1 = hash(searchKey, 1);
+        int hash2 = hash(searchKey, 2);
+        if (table1.containsKey(hash1)) {
+            return table1.get(hash1);
+        } else if (table2.containsKey(hash2)) {
+            return table2.get(hash2);
+        }
+        return  null;
     }
 
     /**
@@ -67,6 +116,6 @@ public class MyCuckooTable<K, V> {
      * @return int
      */
     private int hash(K key, int fno) {
-        return (int) (sh.hash(fno + "" + key) & (TAB_SIZE - 1));
+        return (int) sh.hash(fno + "" + key) & (TAB_SIZE - 1);
     }
 }
