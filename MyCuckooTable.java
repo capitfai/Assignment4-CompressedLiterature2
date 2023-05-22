@@ -130,4 +130,8 @@ public class MyCuckooTable<K, V> {
     private int hash(K key, int fno) {
         return (int) sh.hash(fno + "" + key) & (TAB_SIZE - 1);
     }
+
+    public int getEvictions() {
+        return evictions;
+    }
 }
