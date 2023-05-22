@@ -52,7 +52,7 @@ public class LZW {
             if (myTable.get(currentPrefix + currentChar) != null) {
                 currentPrefix += currentChar;
             } else {
-                if (!myTable.put(currentPrefix + currentChar, code)) {
+                if (!myTable.put(currentPrefix + currentChar, myNumCodes)) {
                     myTable.reset();
                     for(int j = 0; j < RESTART; j++) {
                         myTable.put("" + (char) j, j);
