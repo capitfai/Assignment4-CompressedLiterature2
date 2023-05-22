@@ -5,8 +5,8 @@ public class MyCuckooTable<K, V> {
     /**
      * Hashtable containing keys (type K) and values (type V).
      */
-    HashMap<K,V> table1;
-    HashMap<K, V> table2;
+    private HashMap<K,V> table1;
+    private HashMap<K, V> table2;
     /**
      * Table size, 1 left shifted 16 times.
      */
@@ -28,6 +28,7 @@ public class MyCuckooTable<K, V> {
         table1 = new HashMap<K, V>(TAB_SIZE);
         table2 = new HashMap<K, V>(TAB_SIZE);
         evictions = 0;
+
     }
 
     /**
@@ -81,10 +82,18 @@ public class MyCuckooTable<K, V> {
         int hash2 = hash(searchKey, 2);
         V evictedValue;
         for (int i =0; i < MaxLoop; i++) { // loop up to maxloop times
-            if (table1.get(hash1) == null) { // if the spot in table1 is filled
-                evictedValue = table1.get(hash(searchKey, 1)); // evict old value
+            if (table1.containsKey(searchKey)) { // if the spot in table1 is filled
+                evictedValue = table1.get(searchKey); // evict old value
                 table1.put(searchKey, newValue); // put in new value
                 evictions++; // add to evictions
+                if (table2.containsKey(searchKey)) {
+                    evictedValue = table2.get(searchKey);
+                    table2.put(searchKey, newValue);
+                    evictions++;
+                }
+            } else {
+                table1.put(searchKey, newValue);
+                return true;
             }
             // if the spot in table 2 is filled
             // do the same thing and bounce back to table1
@@ -101,10 +110,11 @@ public class MyCuckooTable<K, V> {
     public V get(K searchKey) {
         int hash1 = hash(searchKey, 1);
         int hash2 = hash(searchKey, 2);
-        if (table1.containsKey(hash1)) {
-            return table1.get(hash1);
-        } else if (table2.containsKey(hash2)) {
-            return table2.get(hash2);
+//        return table1.get(searchKey);
+        if (table1.containsKey(searchKey)) {
+            return table1.get(searchKey);
+        } else if (table2.containsKey(searchKey)) {
+            return table2.get(searchKey);
         }
         return  null;
     }

@@ -8,45 +8,53 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
-        LZW lzw = new LZW();
-        final long startTime = System.currentTimeMillis();
-
-        if (args[0].equals("c")) {
-
-            Path path = Paths.get(args[1]);
-            Stream<String> stringStream = Files.lines(path);
-            lzw.compress(stringStream.toString());
-            final long endTime = System.currentTimeMillis();
-            System.out.println("Compression runtime: " + (endTime - startTime));
-
-        } else if (args[0].equals("d")) {
-
-                String filePath = args[1];
-                byte[] bytes = Files.readAllBytes(Paths.get(filePath));
-                String decompressedText = lzw.decompress(bytes);
-                try  (FileWriter output = new FileWriter(args[2])) {
-                output.write(decompressedText);
-                final long endTime = System.currentTimeMillis();
-                System.out.println("Decompression runtime: " + (endTime - startTime));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        LZW lzw = new LZW();
+//        final long startTime = System.currentTimeMillis();
+//
+//        if (args[0].equals("c")) {
+//
+//            Path path = Paths.get(args[1]);
+//            Stream<String> stringStream = Files.lines(path);
+//            lzw.compress(stringStream.toString());
+//            final long endTime = System.currentTimeMillis();
+//            System.out.println("Compression runtime: " + (endTime - startTime));
+//
+//        } else if (args[0].equals("d")) {
+//
+//                String filePath = args[1];
+//                byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+//                String decompressedText = lzw.decompress(bytes);
+//                try  (FileWriter output = new FileWriter(args[2])) {
+//                output.write(decompressedText);
+//                final long endTime = System.currentTimeMillis();
+//                System.out.println("Decompression runtime: " + (endTime - startTime));
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
 
         testMyCuckooTable();
         testLZW();
     }
 
-    public void testMyCuckooTable() {
-
+    public static void testMyCuckooTable() {
+        MyCuckooTable<String, Integer> testTable = new MyCuckooTable<>();
+        testTable.put("String", 1);
+        System.out.println("Get: " +  testTable.get("String"));
+        System.out.println("Size: " + testTable.size());
+        testTable.reset();
     }
 
-    public void testLZW() {
-
+    public static void testLZW() {
+        byte[] bArr = new byte[10];
+        bArr[0] = 1;
+        LZW testLZW = new LZW();
+        System.out.println(testLZW.compress("abcdabcdabcdabcd"));
+        System.out.println(testLZW.decompress(bArr));
     }
 
 }

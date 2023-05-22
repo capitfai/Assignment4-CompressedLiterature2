@@ -11,7 +11,7 @@ public class LZW {
      */
     static final int RESTART = 256;
 
-    MyCuckooTable<String, Integer> myTable;
+    private MyCuckooTable<String, Integer> myTable;
 
     // constructors
 
@@ -61,33 +61,64 @@ public class LZW {
     }
 
     String decompress(byte[] compressed) {
-
-//        myTable = new MyCuckooTable<>();
-//        String[] data = (compressed + "").split("");
-
-//        myTable = new MyCuckooTable<>();
+        myTable = new MyCuckooTable<>();
 //        List<String> out = new ArrayList<>();
-//        int curr = compressed[0];
+//        String curr = compressed[0] + "";
 //        String seq;
-//        out.add(Character.toString((char) curr));
+//        out.add(curr);
 //        for (int i = 1; i < compressed.length; i++) {
-//            int code = compressed[i];
+//            String code = compressed[i] + "";
 //            if (myTable.get(code) != null) {
-//                seq = myTable.get(code);
+//                seq = myTable.get(code) + "";
 //                out.add(seq);
 //                String next = seq + seq.charAt(0);
-//                myTable.put(myTable.size(), next);
+//                myTable.put(next, myTable.size());
 //            } else {
-//                seq = myTable.get(curr);
+//                seq = myTable.get(curr) + "";
 //                seq += seq.charAt(0);
 //                out.add(seq);
-//                myTable.put(myTable.size(), seq);
+//                myTable.put(seq, myTable.size());
 //            }
 //            curr = code;
 //        }
 //        return String.join("", out);
-//
-        return null;
-    }
+        List<Integer> decompressedData = new ArrayList<>();
 
+        // initialize/reset MyCuckooTable
+        MyCuckooTable<Integer, String> myTable2 = new MyCuckooTable<>();
+        for(int i = 0; i < RESTART; i++) {
+            myTable2.put(i, "" + (char) i);
+        }
+
+        int dictionarySize = myTable2.size();
+        int nextCode = dictionarySize + 1;
+
+        StringBuilder currentSequence = new StringBuilder();
+        for (byte b : compressed) {
+            int code = b & 0xFF; // Convert the byte to an unsigned integer
+            String entry = myTable2.get(code);
+
+            if (entry == null) {
+                entry = currentSequence.toString() + currentSequence.charAt(0);
+            }
+
+            decompressedData.addAll(getCodes(entry));
+
+            if (!currentSequence.isEmpty()) {
+                String newSequence = currentSequence.toString() + entry.charAt(0);
+                myTable2.put(nextCode++, newSequence);
+            }
+
+            currentSequence = new StringBuilder(entry);
+        }
+
+        return decompressedData.toString();
+    }
+    private List<Integer> getCodes (String entry) {
+        List<Integer> codes = new ArrayList<>();
+        for (char c : entry.toCharArray()) {
+            codes.add((int) c);
+        }
+        return codes;
+    }
 }
