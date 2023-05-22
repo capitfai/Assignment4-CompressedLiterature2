@@ -10,16 +10,23 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-//        LZW lzw = new LZW();
-//        final long startTime = System.currentTimeMillis();
-//
+        LZW lzw = new LZW();
+        final long startTime = System.currentTimeMillis();
+
 //        if (args[0].equals("c")) {
 //
 //            Path path = Paths.get(args[1]);
 //            Stream<String> stringStream = Files.lines(path);
 //            lzw.compress(stringStream.toString());
 //            final long endTime = System.currentTimeMillis();
+//            System.out.println("Original length: " + stringStream.toString().length());
+//            System.out.println("Compressed size: " + lzw.myTable.size());
+//            System.out.println("Compression ratio: " + (lzw.myTable.size() / stringStream.toString().length()) + "%");
 //            System.out.println("Compression runtime: " + (endTime - startTime));
+//            System.out.println("Total number of LZW codes: " + lzw.myNumCodes);
+//            System.out.println("Fraction of occupied table entries: " + (lzw.myTable.size() / MyCuckooTable.TABSIZE));
+//            System.out.println("Average number of evictions: " + lzw.myTable.getEvictions());
+//
 //
 //        } else if (args[0].equals("d")) {
 //
