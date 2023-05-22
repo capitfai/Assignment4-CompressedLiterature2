@@ -81,15 +81,17 @@ public class MyCuckooTable<K, V> {
         int hash1 = hash(searchKey, 1);
         int hash2 = hash(searchKey, 2);
         V evictedValue;
-        for (int i =0; i < MaxLoop; i++) { // loop up to maxloop times
+        for (int i = 0; i < MaxLoop; i++) { // loop up to max-loop times
             if (table1.containsKey(searchKey)) { // if the spot in table1 is filled
                 evictedValue = table1.get(searchKey); // evict old value
                 table1.put(searchKey, newValue); // put in new value
                 evictions++; // add to evictions
-                if (table2.containsKey(searchKey)) {
-                    evictedValue = table2.get(searchKey);
-                    table2.put(searchKey, newValue);
-                    evictions++;
+                if (table2.containsKey(searchKey)) { // if the spot is filled in table 2
+                    newValue = table2.get(searchKey); // save old value
+                    table2.put(searchKey, evictedValue); // evict old value with table 1 evicted value
+                    evictions++; // add to evictions
+                } else {
+                    table2.put(searchKey, evictedValue);
                 }
             } else {
                 table1.put(searchKey, newValue);
