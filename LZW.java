@@ -1,3 +1,7 @@
+/*
+ * Spring 2023 - Assignment 4 - Compressed Literature 2
+ * Program by Keegan Sanders, Faith Capito
+ */
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +15,14 @@ public class LZW {
      */
     static final int RESTART = 256;
 
+    /**
+     * Table containing Strings and their LZW codes.
+     */
     public MyCuckooTable<String, Integer> myTable;
 
+    /**
+     * Number of codes counted in table.
+     */
     public int myNumCodes;
 
     // constructors
@@ -67,59 +77,35 @@ public class LZW {
         return out.toByteArray();
     }
 
+    /**
+     * Decompresses byte array into original text.
+     *
+     * @param compressed input byte array
+     * @return String representation of original text.
+     */
     String decompress(byte[] compressed) {
-        myTable = new MyCuckooTable<>();
-//        List<String> out = new ArrayList<>();
-//        String curr = compressed[0] + "";
-//        String seq;
-//        out.add(curr);
-//        for (int i = 1; i < compressed.length; i++) {
-//            String code = compressed[i] + "";
-//            if (myTable.get(code) != null) {
-//                seq = myTable.get(code) + "";
-//                out.add(seq);
-//                String next = seq + seq.charAt(0);
-//                myTable.put(next, myTable.size());
-//            } else {
-//                seq = myTable.get(curr) + "";
-//                seq += seq.charAt(0);
-//                out.add(seq);
-//                myTable.put(seq, myTable.size());
-//            }
-//            curr = code;
-//        }
-//        return String.join("", out);
-        List<Integer> decompressedData = new ArrayList<>(); // array list for decompressed data
-
-        // initialize/reset MyCuckooTable
+        String out = "";
         MyCuckooTable<Integer, String> myTable2 = new MyCuckooTable<>();
         for(int i = 0; i < RESTART; i++) {
-            myTable2.put(i, "" + (char) i);
+            myTable2.put(i,"" + (char) i);
         }
-
-        int dictionarySize = myTable2.size(); // size
-        int nextCode = dictionarySize + 1; // size+1
-
-        StringBuilder currentSequence = new StringBuilder(); // string for current sequence
-        for (byte b : compressed) { // for each byte in input
-            int code = b & 0xFF; // Convert the byte to an unsigned integer
-            String entry = myTable2.get(code); // var entry is the value of the code
-
-            if (entry == null) { // if entry doesn't exist
-                entry = currentSequence.toString() + currentSequence.charAt(0); // reassign entry to be curr + first char of the sequence
+//        System.out.println("here: " + myTable2.get(0));
+        int old = compressed[0] & 0xFF;
+        out += myTable2.get(old);
+        for (int i : compressed) {
+            int next = compressed[i] & 0xFF;
+            if (myTable2.get(next) != null) {
+                s = myTable2.get(old);
+                s += c;
+            } else {
+                s = myTable2.get(next);
             }
-
-            decompressedData.addAll(getCodes(entry)); // add the code to decompressed data from the entry
-
-            if (!currentSequence.isEmpty()) { // if curr isn't empty
-                String newSequence = currentSequence.toString() + entry.charAt(0); // new is current plus first char of the entry
-                myTable2.put(nextCode++, newSequence); // put into the table nextcode++ and the new sequence
-            }
-
-            currentSequence = new StringBuilder(entry); // current sequence is string of the entry
+            out += s;
+            c = s.charAt(0);
+            myTable2.put(old, String.valueOf(c));
+            old = next;
         }
-
-        return decompressedData.toString(); // return decompressed data
+        return out;
     }
     private List<Integer> getCodes (String entry) {
         List<Integer> codes = new ArrayList<>();
