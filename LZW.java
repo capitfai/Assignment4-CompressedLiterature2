@@ -89,7 +89,7 @@ public class LZW {
 //            curr = code;
 //        }
 //        return String.join("", out);
-        List<Integer> decompressedData = new ArrayList<>();
+        List<Integer> decompressedData = new ArrayList<>(); // array list for decompressed data
 
         // initialize/reset MyCuckooTable
         MyCuckooTable<Integer, String> myTable2 = new MyCuckooTable<>();
@@ -97,29 +97,29 @@ public class LZW {
             myTable2.put(i, "" + (char) i);
         }
 
-        int dictionarySize = myTable2.size();
-        int nextCode = dictionarySize + 1;
+        int dictionarySize = myTable2.size(); // size
+        int nextCode = dictionarySize + 1; // size+1
 
-        StringBuilder currentSequence = new StringBuilder();
-        for (byte b : compressed) {
+        StringBuilder currentSequence = new StringBuilder(); // string for current sequence
+        for (byte b : compressed) { // for each byte in input
             int code = b & 0xFF; // Convert the byte to an unsigned integer
-            String entry = myTable2.get(code);
+            String entry = myTable2.get(code); // var entry is the value of the code
 
-            if (entry == null) {
-                entry = currentSequence.toString() + currentSequence.charAt(0);
+            if (entry == null) { // if entry doesn't exist
+                entry = currentSequence.toString() + currentSequence.charAt(0); // reassign entry to be curr + first char of the sequence
             }
 
-            decompressedData.addAll(getCodes(entry));
+            decompressedData.addAll(getCodes(entry)); // add the code to decompressed data from the entry
 
-            if (!currentSequence.isEmpty()) {
-                String newSequence = currentSequence.toString() + entry.charAt(0);
-                myTable2.put(nextCode++, newSequence);
+            if (!currentSequence.isEmpty()) { // if curr isn't empty
+                String newSequence = currentSequence.toString() + entry.charAt(0); // new is current plus first char of the entry
+                myTable2.put(nextCode++, newSequence); // put into the table nextcode++ and the new sequence
             }
 
-            currentSequence = new StringBuilder(entry);
+            currentSequence = new StringBuilder(entry); // current sequence is string of the entry
         }
 
-        return decompressedData.toString();
+        return decompressedData.toString(); // return decompressed data
     }
     private List<Integer> getCodes (String entry) {
         List<Integer> codes = new ArrayList<>();
