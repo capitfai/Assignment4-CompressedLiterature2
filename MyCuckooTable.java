@@ -1,11 +1,15 @@
+/*
+ * Spring 2023 - Assignment 4 - Compressed Literature 2
+ * Program by Keegan Sanders, Faith Capito
+ */
 import java.util.HashMap;
 
 public class MyCuckooTable<K, V> {
     /**
      * Hashtable containing keys (type K) and values (type V).
      */
-    private HashMap<K,V> table1;
-    private HashMap<K, V> table2;
+    private final HashMap<K,V> table1;
+    private final HashMap<K, V> table2;
     /**
      * Table size, 1 left shifted 16 times.
      */
@@ -24,8 +28,8 @@ public class MyCuckooTable<K, V> {
      * Cuckoo Table constructor.
      */
     public MyCuckooTable() {
-        table1 = new HashMap<K, V>(TABSIZE);
-        table2 = new HashMap<K, V>(TABSIZE);
+        table1 = new HashMap<>(TABSIZE);
+        table2 = new HashMap<>(TABSIZE);
         evictions = 0;
 
     }
@@ -53,30 +57,6 @@ public class MyCuckooTable<K, V> {
      * @return boolean
      */
     public boolean put(K searchKey, V newValue) {
-//        int hash1 = hash(searchKey, 1);
-//        int hash2 = hash(searchKey, 2);
-//        V evictedValue;
-//        for (int i = 0; i < MaxLoop; i++) {
-//            if (!table1.containsKey(hash1)) {
-//                table1.put(searchKey, newValue);
-//                return true;
-//            } else {
-//                evictedValue = table1.get(hash1);
-////                table2.put(hash(table1.replace(hash1, newValue), 2);
-//                table1.put()
-//                evictions++;
-//            }
-//            table2.put(searchKey, newValue);
-//            newValue = evictedValue;
-//            if (evictedValue.equals(newValue)) {
-//                return true; // Key already exists, update the value
-//            }
-//            hash1 = hash(searchKey, 1);
-//            hash2 = hash(searchKey, 2);
-//        }
-//        return false;
-
-        // start
         int hash1 = hash(searchKey, 1);
         int hash2 = hash(searchKey, 2);
         V evictedValue;
@@ -96,10 +76,7 @@ public class MyCuckooTable<K, V> {
                 table1.put(searchKey, newValue);
                 return true;
             }
-            // if the spot in table 2 is filled
-            // do the same thing and bounce back to table1
         }
-        // if exceeds maxloop, return false cause it failed (maybe rehash both tables entirely?)
         return false;
     }
 
@@ -111,7 +88,6 @@ public class MyCuckooTable<K, V> {
     public V get(K searchKey) {
         int hash1 = hash(searchKey, 1);
         int hash2 = hash(searchKey, 2);
-//        return table1.get(searchKey);
         if (table1.containsKey(searchKey)) {
             return table1.get(searchKey);
         } else if (table2.containsKey(searchKey)) {

@@ -4,7 +4,6 @@
  */
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,8 +53,8 @@ public class Main {
         }
 
 
-        testMyCuckooTable();
-        testLZW();
+//        testMyCuckooTable();
+//        testLZW();
     }
 
     public static void testMyCuckooTable() {
@@ -74,7 +73,9 @@ public class Main {
         String testString3 = "zaza";
         LZW testLZW = new LZW();
         System.out.println(testLZW.compress(testString));
-        System.out.println(testLZW.decompress(testLZW.compress(testString)));
+        System.out.println(testLZW.compress(testString2));
+        System.out.println(testLZW.compress(testString3));
+        System.out.println(testLZW.decompress(testLZW.compress(testString2)));
     }
 
 }

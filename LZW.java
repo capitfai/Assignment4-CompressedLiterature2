@@ -3,8 +3,6 @@
  * Program by Keegan Sanders, Faith Capito
  */
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LZW {
 
@@ -38,7 +36,7 @@ public class LZW {
      * Compresses String text to list of encoded bytes and initializes table.
      *
      * @param fullText String text to be encoded.
-     * @return list of encoded bytes.
+     * @return byte[] of encoded bytes.
      */
     byte[] compress(String fullText) {
 
@@ -51,30 +49,29 @@ public class LZW {
             myTable.put("" + (char) i, i);
         }
 
-
         String[] data = (fullText + "").split("");
         String currentPrefix = data[0];
         String currentChar;
         myNumCodes = 256;
 
-        for(int i = 1; i < data.length; i++) {
-            currentChar = data[i];
-            if (myTable.get(currentPrefix + currentChar) != null) {
-                currentPrefix += currentChar;
-            } else {
-                if (!myTable.put(currentPrefix + currentChar, myNumCodes)) {
-                    myTable.reset();
-                    for(int j = 0; j < RESTART; j++) {
+        for(int i = 1; i < data.length; i++) { // for each in data
+            currentChar = data[i]; // curr is data at i
+            if (myTable.get(currentPrefix + currentChar) != null) { // if the table doesn't have current prefix + current char
+                currentPrefix += currentChar; // add current char to current prefix
+            } else { // if the table does have the current prefix + current char
+                if (!myTable.put(currentPrefix + currentChar, myNumCodes)) { // if putting current prefix + current char at numcodes exceeds max loop
+                    myTable.reset(); // reset the table
+                    for(int j = 0; j < RESTART; j++) { // init table
                         myTable.put("" + (char) j, j);
                     }
                 }
-                myNumCodes++;
-                out.write(myTable.get(currentPrefix + currentChar));
-                currentPrefix = currentChar;
+                myNumCodes++; // increment numcodes
+                i += (currentPrefix + currentChar).length();
+                out.write(myTable.get(currentPrefix + currentChar)); // write code of current prefix + current char to stream
+                currentPrefix = currentChar; // increment in data
             }
         }
-
-        return out.toByteArray();
+        return out.toByteArray(); // return out as arr
     }
 
     /**
@@ -86,6 +83,8 @@ public class LZW {
     String decompress(byte[] compressed) {
         String out = "";
         MyCuckooTable<Integer, String> myTable2 = new MyCuckooTable<>();
+        String s;
+        char c = 'c';
         for(int i = 0; i < RESTART; i++) {
             myTable2.put(i,"" + (char) i);
         }
@@ -106,12 +105,5 @@ public class LZW {
             old = next;
         }
         return out;
-    }
-    private List<Integer> getCodes (String entry) {
-        List<Integer> codes = new ArrayList<>();
-        for (char c : entry.toCharArray()) {
-            codes.add((int) c);
-        }
-        return codes;
     }
 }
