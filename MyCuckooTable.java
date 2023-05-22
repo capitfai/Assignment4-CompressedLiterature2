@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.Hashtable;
 
 public class MyCuckooTable<K, V> {
     /**
@@ -10,11 +9,11 @@ public class MyCuckooTable<K, V> {
     /**
      * Table size, 1 left shifted 16 times.
      */
-    public static final int TAB_SIZE = 1 << 16;
+    public static final int TABSIZE = 1 << 16;
     /**
      * max length of the cuckoo key loop, (3lg2^16)=48.
      */
-    private static final int MaxLoop = (int) Math.ceil(3 * Math.log(TAB_SIZE) / Math.log(2));
+    private static final int MaxLoop = (int) Math.ceil(3 * Math.log(TABSIZE) / Math.log(2));
     /**
      * SipHash object.
      */
@@ -25,8 +24,8 @@ public class MyCuckooTable<K, V> {
      * Cuckoo Table constructor.
      */
     public MyCuckooTable() {
-        table1 = new HashMap<K, V>(TAB_SIZE);
-        table2 = new HashMap<K, V>(TAB_SIZE);
+        table1 = new HashMap<K, V>(TABSIZE);
+        table2 = new HashMap<K, V>(TABSIZE);
         evictions = 0;
 
     }
@@ -128,7 +127,7 @@ public class MyCuckooTable<K, V> {
      * @return int
      */
     private int hash(K key, int fno) {
-        return (int) sh.hash(fno + "" + key) & (TAB_SIZE - 1);
+        return (int) sh.hash(fno + "" + key) & (TABSIZE - 1);
     }
 
     public int getEvictions() {

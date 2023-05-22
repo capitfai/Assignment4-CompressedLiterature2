@@ -11,7 +11,9 @@ public class LZW {
      */
     static final int RESTART = 256;
 
-    private MyCuckooTable<String, Integer> myTable;
+    public MyCuckooTable<String, Integer> myTable;
+
+    public int myNumCodes;
 
     // constructors
 
@@ -43,15 +45,15 @@ public class LZW {
         String[] data = (fullText + "").split("");
         String currentPrefix = data[0];
         String currentChar;
-        int code = RESTART;
+        myNumCodes = 256;
 
         for(int i = 1; i < data.length; i++) {
             currentChar = data[i];
             if (myTable.get(currentPrefix + currentChar) != null) {
                 currentPrefix += currentChar;
             } else {
-                myTable.put(currentPrefix + currentChar, code);
-                code++;
+                myTable.put(currentPrefix + currentChar, myNumCodes);
+                myNumCodes++;
                 out.write(myTable.get(currentPrefix + currentChar));
                 currentPrefix = currentChar;
             }
