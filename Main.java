@@ -59,9 +59,10 @@ public class Main {
     public static void testLZW() {
         byte[] bArr = new byte[10];
         bArr[0] = 1;
+        String testString = "abcdabcdabcdabcd";
         LZW testLZW = new LZW();
-        System.out.println(testLZW.compress("abcdabcdabcdabcd"));
-        System.out.println(testLZW.decompress(bArr));
+        System.out.println(testLZW.compress(testString));
+        System.out.println(testLZW.decompress(testLZW.compress(testString)));
     }
 
 }
