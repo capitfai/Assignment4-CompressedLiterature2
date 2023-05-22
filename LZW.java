@@ -58,7 +58,7 @@ public class LZW {
                         myTable.put("" + (char) j, j);
                     }
                 }
-                code++;
+                myNumCodes++;
                 out.write(myTable.get(currentPrefix + currentChar));
                 currentPrefix = currentChar;
             }
